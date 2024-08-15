@@ -13,3 +13,4 @@ connectDB();
 app.listen(port, () => console.log(`API started on port ${port}`));
 
 app.use("/users", require("./controllers/users"));
+app.use("/userPermissions", require("./controllers/userPermissions"));
