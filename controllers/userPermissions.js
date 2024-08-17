@@ -5,8 +5,9 @@ const auth = require("../middleware/auth");
 const User = require("../mongodb_models/User");
 router.get("/", auth, async (req, res) => {
   try {
-    const data = await UAI.find({ user: req.user._id });
-    res.json(data);
+    const data = await UAI.find({ userID: req.user._id });
+    console.log(data);
+    res.json(data[0]);
   } catch (e) {
     res.json({ error: e.message });
   }
