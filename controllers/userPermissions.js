@@ -6,7 +6,6 @@ const User = require("../mongodb_models/User");
 router.get("/", auth, async (req, res) => {
   try {
     const data = await UAI.find({ userID: req.user._id });
-    console.log(data);
     res.json(data[0]);
   } catch (e) {
     res.json({ error: e.message });
@@ -34,6 +33,28 @@ router.post("/", async (req, res) => {
       // {user: username, linkedToSpotify: false}
       await newUserPermission.save();
       res.json(newUserPermission);
+    }
+  } catch (e) {
+    res.json({ error: e.message });
+  }
+});
+router.put("/setlts/:property", auth, async (req, res) => {
+  try {
+    const userID = req.user._id;
+    const existingID = await UAI.find({ userID });
+    if (existingID.length > 0) {
+      const update = await UAI.findOneAndUpdate(
+        { userID: userID },
+        { linkedToSpotify: req.params.property },
+        { new: true }
+      );
+      update.save();
+      const newData = await UAI.find({ userID });
+      res.json({ status: "Successful", newData });
+    } else {
+      res.status(400).json({
+        error: "User does not exist in the database",
+      });
     }
   } catch (e) {
     res.json({ error: e.message });
