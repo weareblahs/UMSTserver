@@ -7,7 +7,7 @@ const path = require("path");
 const multer = require("multer");
 const albumCoverFileType = ["image/jpeg", "image/png", "image/jpg"];
 
-const uploadAlbumInfo = multer({ dest: "./tempData" });
+const uploadAlbumInfo = multer({ dest: "./privData" });
 // post album info
 
 // will do get album once distribution portal has been done
