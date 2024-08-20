@@ -28,3 +28,6 @@ src/WebComponents/Backend/spotifyClientData.jsx
 
 # kinde data
 src/WebComponents/Backend/KindeData.jsx
+
+# Ignore privData folder content because that is used for storing temporary data. Instead, processed data (example: flac / resized png) will be served via the server itself
+privData/*

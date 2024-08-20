@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../mongodb_models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const auth = require("../middleware/auth");
 const { SECRET_KEY } = process.env;
 router.post("/register", async (req, res) => {
   try {
@@ -35,6 +35,17 @@ router.post("/login", async (req, res) => {
     return res.json({ token, user, msg: "Logged in Successfully" });
   } catch (e) {
     return res.status(400).json({ error: e.message });
+  }
+});
+
+router.get("/userInfo", auth, async (req, res) => {
+  try {
+    const userInfo = await User.findById(req.user._id);
+    res
+      .status(200)
+      .json({ name: userInfo.fullname, isAdmin: userInfo.isAdmin });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
   }
 });
 

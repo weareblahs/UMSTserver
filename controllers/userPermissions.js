@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
     const user = req.body.user;
     const userData = await User.find({ username: user });
     const existingID = await UAI.find({ userID: userData[0].id });
-    console.log(existingID);
+
     if (existingID.length > 0) {
       res.status(400).json({
         error:
@@ -33,28 +33,6 @@ router.post("/", async (req, res) => {
       // {user: username, linkedToSpotify: false}
       await newUserPermission.save();
       res.json(newUserPermission);
-    }
-  } catch (e) {
-    res.json({ error: e.message });
-  }
-});
-router.put("/setlts/:property", auth, async (req, res) => {
-  try {
-    const userID = req.user._id;
-    const existingID = await UAI.find({ userID });
-    if (existingID.length > 0) {
-      const update = await UAI.findOneAndUpdate(
-        { userID: userID },
-        { linkedToSpotify: req.params.property },
-        { new: true }
-      );
-      update.save();
-      const newData = await UAI.find({ userID });
-      res.json({ status: "Successful", newData });
-    } else {
-      res.status(400).json({
-        error: "User does not exist in the database",
-      });
     }
   } catch (e) {
     res.json({ error: e.message });
