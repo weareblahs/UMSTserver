@@ -23,7 +23,7 @@ router.post(
       let album = new Album(req.body);
       if (req.file) album.albumArt = req.file.filename;
       album.save();
-      return res.json({ album, msg: "Album added successfully" });
+      return res.json({ album, msg: "Basic album info added successfully" });
     } catch (e) {
       res.status(400).json({ error: e.message });
     }
