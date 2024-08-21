@@ -11,7 +11,15 @@ const uploadAlbumInfo = multer({ dest: "./privData" });
 // post album info
 
 // will do get album once distribution portal has been done
-
+// "sdap": "stripped-down album properties"
+router.get("/sdap", auth, async (req, res) => {
+  try {
+    const albums = await Album.find();
+    res.json(albums);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
 router.post(
   "/addAlbumInfo",
   auth,

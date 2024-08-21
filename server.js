@@ -15,3 +15,4 @@ app.listen(port, () => console.log(`API started on port ${port}`));
 app.use("/users", require("./controllers/users"));
 app.use("/userPermissions", require("./controllers/userPermissions"));
 app.use("/albumManagement", require("./controllers/albumManagement"));
+app.use("/img", require("./tools/image"));
