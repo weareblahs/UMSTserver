@@ -24,7 +24,10 @@ router.get("/sdap", auth, async (req, res) => {
 
 router.get("/singleAlbum/:id", auth, async (req, res) => {
   try {
-    const albums = await Album.findById(req.params.id).populate("tracks");
+    const albums = await Album.findById(req.params.id).populate({
+      path: "tracks",
+      options: { sort: { trackNo: 1 } },
+    });
     res.json(albums);
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -35,7 +38,6 @@ router.post(
   auth,
   uploadAlbumInfo.single("albumArt"),
   async (req, res) => {
-    // WHAT TO DO: add album, upload album art via formdata. can see ecommerce for reference
     try {
       let album = new Album(req.body);
       if (req.file) album.albumArt = req.file.filename;
@@ -50,16 +52,18 @@ router.post(
 // update existing album to include tracks
 router.post("/addAlbumTrackInfo/:id", auth, async (req, res) => {
   try {
-    const array = req.body;
-    const album = await Album.findByIdAndUpdate(req.params.id, array, {
-      new: true,
-    });
-    album.save();
-    const albums = await Album.findById(req.params.id);
-    console.log(album);
-    album.save();
+    console.log(req.body);
+    const album = await Album.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      {
+        new: true,
+      }
+    );
 
-    res.json({ message: "Album data added successfully", albums });
+    console.log(album);
+
+    res.json({ message: "Album data added successfully", album });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
@@ -83,6 +87,18 @@ router.get("/getAlbumTrack/:albumID", auth, async (req, res) => {
   try {
     const tracks = await Track.find({ relAlbumId: req.params.albumID });
     res.json(tracks);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.post("/AcceptUploadedFiles", auth, async (req, res) => {});
+
+router.delete("/deleteAlbum/:id", auth, async (req, res) => {
+  try {
+    const album = await Album.findByIdAndDelete(req.params.id);
+    const track = await Track.deleteMany({ relAlbumID: req.params.albumID });
+    res.json({ status: `Album with ID ${req.params.id} deleted successfully` });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
