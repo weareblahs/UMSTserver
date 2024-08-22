@@ -4,7 +4,7 @@ const AlbumSchema = new mongoose.Schema({
   mainArtist: { type: String },
   albumArt: { type: String },
   albumType: { type: String },
-  tracklist: { type: Map, of: String },
+  tracks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }],
 });
 
 module.exports = mongoose.model("Albums", AlbumSchema);

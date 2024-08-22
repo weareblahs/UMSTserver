@@ -13,7 +13,7 @@ router.get("/:id/:w", (req, res) => {
         res.end(data);
       })
       .catch((err) => {
-        res.json({ error: e.message });
+        res.json({ error: err.message });
       });
   } catch (e) {
     return res.json({ error: e.message });
