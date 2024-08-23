@@ -8,11 +8,13 @@ const multer = require("multer");
 const Track = require("../mongodb_models/Track");
 const albumCoverFileType = ["image/jpeg", "image/png", "image/jpg"];
 const uploadAlbumInfo = multer({ dest: "./privData" });
+const ffmpegPath = require("ffmpeg-static");
+const childProcess = require("child_process");
 // post album info
 
 // will do get album once distribution portal has been done
 // "sdap": "stripped-down album properties"
-router.get("/sdap", auth, async (req, res) => {
+router.get("/sdap", async (req, res) => {
   try {
     const albums = await Album.find();
     res.json(albums);
@@ -107,13 +109,48 @@ router.post(
     try {
       fs.mkdir(`./privData/${req.params.id}`);
       const files = req.files;
+      fs.mkdir(`./audioStorage/${req.params.id}`);
       files.forEach((singleFile) => {
         fs.rename(
           `./privData/${singleFile.originalname}`,
           `./privData/${req.params.id}/${req.params.id}_${singleFile.originalname}`
         );
-        res.json({ status: "Files successfully uploaded to servers" });
+        // flac encoding
+        files.forEach(async (singleFile) => {
+          const ffmpegProcess = childProcess.spawn(ffmpegPath, [
+            "-i",
+            `./privData/${req.params.id}/${req.params.id}_${singleFile.originalname}`,
+            `./audioStorage/${req.params.id}/${
+              req.params.id
+            }_${singleFile.originalname.slice(0, -4)}.flac`,
+          ]);
+          ffmpegProcess.on("error", () => {
+            // catches execution error (bad file)
+            console.log(`Error executing binary: ${ffmpegPath}`);
+          });
+
+          ffmpegProcess.stdout.on("data", (data) => {
+            console.log(data.toString());
+          });
+
+          ffmpegProcess.stderr.on("data", (data) => {
+            console.log(data.toString());
+          });
+
+          ffmpegProcess.on("close", (code) => {
+            console.log(`Process exited with code: ${code}`);
+            if (code === 0) {
+              console.log(`FFmpeg finished successfully`);
+            } else {
+              console.log(
+                `FFmpeg encountered an error, check the console output`
+              );
+            }
+          });
+        });
       });
+      res.json({ status: "Files successfully uploaded to servers" });
+
       // res.json(req.files);
     } catch (e) {
       res.status(400).json({ error: e.message });
@@ -123,9 +160,41 @@ router.post(
 
 router.delete("/deleteAlbum/:id", auth, async (req, res) => {
   try {
+    const albumInfo = await Album.findById(req.params.id);
     const album = await Album.findByIdAndDelete(req.params.id);
     const track = await Track.deleteMany({ relAlbumID: req.params.albumID });
+    // delete album audio
+    albumInfo?.albumArt
+      ? fs.unlinkSync(`./privData/${albumInfo.albumArt}`)
+      : null;
+    fs.rmSync(`./privData/${req.params.id}`, { recursive: true, force: true });
     res.json({ status: `Album with ID ${req.params.id} deleted successfully` });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.post("/addCopyrightInfo/:id", auth, async (req, res) => {
+  try {
+    const updateInfo = await Album.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    updateInfo.save();
+    res.json({ status: "Update successful", updateInfo });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.post("/setAvailable/:id/:bool", auth, async (req, res) => {
+  try {
+    const setInfo = await Album.findByIdAndUpdate(
+      req.params.id,
+      { isAvailable: req.params.bool },
+      { new: true }
+    );
+    setInfo.save();
+    res.json({ status: "Update successful", setInfo });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

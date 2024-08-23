@@ -4,7 +4,6 @@ const AlbumSchema = new mongoose.Schema({
   trackNo: { type: Number },
   trackName: { type: String },
   trackArtist: { type: String },
-  relatedAudio: { type: String },
 });
 
 module.exports = mongoose.model("Track", AlbumSchema);
