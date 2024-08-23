@@ -2,12 +2,11 @@ const express = require("express");
 const router = express.Router();
 const Album = require("../mongodb_models/Album");
 const auth = require("../middleware/auth");
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 const multer = require("multer");
 const Track = require("../mongodb_models/Track");
 const albumCoverFileType = ["image/jpeg", "image/png", "image/jpg"];
-
 const uploadAlbumInfo = multer({ dest: "./privData" });
 // post album info
 
@@ -91,8 +90,36 @@ router.get("/getAlbumTrack/:albumID", auth, async (req, res) => {
     res.status(400).json({ error: e.message });
   }
 });
-
-router.post("/AcceptUploadedFiles", auth, async (req, res) => {});
+const audioFileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "privData/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+const uploadAudio = multer({ storage: audioFileStorage });
+router.post(
+  "/AcceptUploadedFiles/:id",
+  auth,
+  uploadAudio.array("tracks", 128),
+  (req, res) => {
+    try {
+      fs.mkdir(`./privData/${req.params.id}`);
+      const files = req.files;
+      files.forEach((singleFile) => {
+        fs.rename(
+          `./privData/${singleFile.originalname}`,
+          `./privData/${req.params.id}/${req.params.id}_${singleFile.originalname}`
+        );
+        res.json({ status: "Files successfully uploaded to servers" });
+      });
+      // res.json(req.files);
+    } catch (e) {
+      res.status(400).json({ error: e.message });
+    }
+  }
+);
 
 router.delete("/deleteAlbum/:id", auth, async (req, res) => {
   try {
