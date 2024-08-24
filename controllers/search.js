@@ -25,8 +25,14 @@ router.get("/track/:trackName", async (req, res) => {
 
 router.get("/albumDetails/:albumID", async (req, res) => {
   try {
-    const search = await Album.findById(req.params.albumID).populate("tracks");
-    res.json(search);
+    const search = await Album.findById(req.params.albumID);
+    const tracks = await Track.find({ relAlbumId: req.params.albumID });
+    data = tracks.sort((a, b) => {
+      if (a.id < b.id) {
+        return -1;
+      }
+    });
+    res.json({ search, tracks });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
