@@ -1,12 +1,12 @@
 {
-  "name": "server",
+  "name": "umstserver",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "@rowboat/mongoose-fuzzy-searching": "^2.0.3",
