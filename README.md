@@ -37,10 +37,11 @@ If you are planning to use Untitled Music Streaming Thing after setting up the s
 
 # Credits (otherwise known as "What does this project use?")
 
-| Application / Component name                                                           | Usage                               |
-| -------------------------------------------------------------------------------------- | ----------------------------------- |
-| [MongoDB](https://www.mongodb.com/)                                                    | Backend database                    |
-| [Express.js](https://expressjs.com/)                                                   | Backend API Controls                |
-| [Node.js](https://nodejs.org/en)                                                       | Frontend/backend base               |
-| [Express.js Multer](https://github.com/expressjs/multer)                               | File uploading middleware           |
-| [mongoose-fuzzy-searching](https://github.com/VassilisPallas/mongoose-fuzzy-searching) | Used for searching albums and songs |
+| Application / Component name                                                           | Usage                                            |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [MongoDB](https://www.mongodb.com/)                                                    | Backend database                                 |
+| [Express.js](https://expressjs.com/)                                                   | Backend API Controls                             |
+| [Node.js](https://nodejs.org/en)                                                       | Frontend/backend base                            |
+| [Express.js Multer](https://github.com/expressjs/multer)                               | File uploading middleware                        |
+| [mongoose-fuzzy-searching](https://github.com/VassilisPallas/mongoose-fuzzy-searching) | Used for searching albums and songs              |
+| [node-ffmpeg-installer](https://github.com/kribblo/node-ffmpeg-installer)              | Used for encoding files compatible for streaming |
