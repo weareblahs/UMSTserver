@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mongoose_fuzzy_searching = require("@rowboat/mongoose-fuzzy-searching");
 const AlbumSchema = new mongoose.Schema({
   albumName: { type: String },
   mainArtist: { type: String },
@@ -10,5 +11,7 @@ const AlbumSchema = new mongoose.Schema({
   phonoCopyright: { type: String },
   available: { type: Boolean },
 });
-
+AlbumSchema.plugin(mongoose_fuzzy_searching, {
+  fields: ["albumName", "mainArtist"],
+});
 module.exports = mongoose.model("Albums", AlbumSchema);

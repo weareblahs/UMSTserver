@@ -168,6 +168,10 @@ router.delete("/deleteAlbum/:id", auth, async (req, res) => {
       ? fs.unlinkSync(`./privData/${albumInfo.albumArt}`)
       : null;
     fs.rmSync(`./privData/${req.params.id}`, { recursive: true, force: true });
+    fs.rmSync(`./audioStorage/${req.params.id}`, {
+      recursive: true,
+      force: true,
+    });
     res.json({ status: `Album with ID ${req.params.id} deleted successfully` });
   } catch (e) {
     res.status(400).json({ error: e.message });
