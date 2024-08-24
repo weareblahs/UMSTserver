@@ -14,7 +14,9 @@ router.get("/album/:albumName", async (req, res) => {
 
 router.get("/track/:trackName", async (req, res) => {
   try {
-    const search = await Track.fuzzySearch(req.params.trackName);
+    const search = await Track.fuzzySearch(req.params.trackName).populate(
+      "relAlbumId"
+    );
     res.json(search);
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -30,3 +32,22 @@ router.get("/albumDetails/:albumID", async (req, res) => {
   }
 });
 module.exports = router;
+
+router.get("/singleTrack/:albumID/:trackPos", async (req, res) => {
+  try {
+    const search = await Track.find({
+      relAlbumId: req.params.albumID,
+      trackNo: parseInt(req.params.trackPos),
+    }).populate({
+      path: "relAlbumId",
+      select: "albumName",
+      select: "mainArtist",
+      select: "albumArt",
+      select: "-_id",
+      select: "-tracks",
+    });
+    res.json(search[0]);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});

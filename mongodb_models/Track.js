@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const mongoose_fuzzy_searching = require("@rowboat/mongoose-fuzzy-searching");
 const TrackSchema = new mongoose.Schema({
-  relAlbumId: { type: mongoose.Schema.Types.ObjectId, ref: "Album" },
+  relAlbumId: { type: mongoose.Schema.Types.ObjectId, ref: "Albums" },
   trackNo: { type: Number },
   trackName: { type: String },
   trackArtist: { type: String },
