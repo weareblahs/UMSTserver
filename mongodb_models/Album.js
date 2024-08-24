@@ -6,6 +6,7 @@ const AlbumSchema = new mongoose.Schema({
   albumArt: { type: String },
   albumType: { type: String },
   releaseYear: { type: String },
+  label: { type: String },
   tracks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Track" }],
   copyright: { type: String },
   phonoCopyright: { type: String },
