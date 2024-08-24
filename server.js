@@ -17,3 +17,4 @@ app.use("/userPermissions", require("./controllers/userPermissions"));
 app.use("/albumManagement", require("./controllers/albumManagement"));
 app.use("/img", require("./tools/image"));
 app.use("/search", require("./controllers/search"));
+app.use("/audio", require("./tools/audio"));

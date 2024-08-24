@@ -14,9 +14,7 @@ router.get("/album/:albumName", async (req, res) => {
 
 router.get("/track/:trackName", async (req, res) => {
   try {
-    const search = await Track.fuzzySearch({
-      trackName: req.params.albumName,
-    }).populate({ path: "relAlbumId" });
+    const search = await Track.fuzzySearch(req.params.trackName);
     res.json(search);
   } catch (e) {
     res.status(400).json({ error: e.message });
