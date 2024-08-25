@@ -162,7 +162,7 @@ router.delete("/deleteAlbum/:id", auth, async (req, res) => {
   try {
     const albumInfo = await Album.findById(req.params.id);
     const album = await Album.findByIdAndDelete(req.params.id);
-    const track = await Track.deleteMany({ relAlbumID: req.params.albumID });
+    const track = await Track.deleteMany({ relAlbumID: req.params.id });
     // delete album audio
     albumInfo?.albumArt
       ? fs.unlinkSync(`./privData/${albumInfo.albumArt}`)
@@ -199,6 +199,29 @@ router.post("/setAvailable/:id/:bool", auth, async (req, res) => {
     );
     setInfo.save();
     res.json({ status: "Update successful", setInfo });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.get("/toggleAlbumAvailability/:id/:opts", auth, async (req, res) => {
+  try {
+    if (req.params.opts == "view") {
+      const result = await Album.findById(req.params.id);
+      res.json(result.available);
+    } else if (req.params.opts == "true" || req.params.opts == "false") {
+      const result = await Album.findByIdAndUpdate(
+        req.params.id,
+        {
+          available: req.params.opts,
+        },
+        { new: true }
+      );
+      result.save();
+      res.json(result.available);
+    } else {
+      res.status(400).json({ error: "Invalid value" });
+    }
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
