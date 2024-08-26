@@ -163,6 +163,8 @@ router.delete("/deleteAlbum/:id", auth, async (req, res) => {
     const albumInfo = await Album.findById(req.params.id);
     const album = await Album.findByIdAndDelete(req.params.id);
     const track = await Track.deleteMany({ relAlbumID: req.params.id });
+    album.save();
+    track.save();
     // delete album audio
     albumInfo?.albumArt
       ? fs.unlinkSync(`./privData/${albumInfo.albumArt}`)
